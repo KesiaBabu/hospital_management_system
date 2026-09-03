@@ -1,0 +1,89 @@
+
+{% extends 'doctor/doctorbase.html' %}
+
+{% block content %}
+<style>
+   
+    .table-row-hover:hover {
+        background-color: #f0f0f0 !important; 
+    }
+</style>
+<div class="container mt-5 mb-5">
+    <h2 class="text-center text-black mb-4">
+        <i class="fas fa-user"></i> Patient Details
+    </h2>
+
+    {% if patient %}
+        
+       <div class="card shadow mb-4" style="background: white; border-left: 6px solid #17a2b8; border-radius: 12px;">
+    <div class="card-body">
+        <h5 class="card-title text-info font-weight-bold">
+            <i class="fas fa-user-circle"></i> Basic Information
+        </h5>
+        <hr style="border-top: 1px solid #17a2b8;">
+        
+        <div class="row">
+            <div class="col-md-6 mb-2">
+                <strong>🆔 Patient ID:</strong> <span class="ml-2 text-dark">{{ patient.patient_id }}</span>
+            </div>
+            <div class="col-md-6 mb-2">
+                <strong>👤 Name:</strong> <span class="ml-2 text-dark">{{ patient.patient_name }}</span>
+            </div>
+            <div class="col-md-6 mb-2">
+                <strong>🏠 Address:</strong> <span class="ml-2 text-dark">{{ patient.patient_address }}</span>
+            </div>
+            <div class="col-md-6 mb-2">
+                <strong>📱 Mobile Number:</strong> <span class="ml-2 text-dark">{{ patient.mobile_number }}</span>
+            </div>
+            <div class="col-md-6 mb-2">
+                <strong>✉️ Email:</strong> <span class="ml-2 text-dark">{{ patient.email }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <div class="mt-4 pb-5">
+            <h4 class="mb-3 text-primary">📝 Consultation History</h4>
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                    <thead style="background-color: #c9daf8;">  
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Department</th>
+                            <th>Doctor Name</th>
+                            <th>Illness</th>
+                            <th>Medicine Name</th>
+                            <th>Consumption Time</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody style="background-color: white;">
+                        {% if consultations %}
+                            {% for consultation in consultations %}
+                                <tr class="table-row-hover">
+                                    <td>{{ consultation.timestamp|date:"F d, Y H:i" }}</td>
+                                    <td>{{ consultation.appointment.department.department_name }}</td>
+                                    <td>{{ consultation.appointment.doctor.get_full_name }}</td>
+                                    <td>{{ consultation.illness }}</td>
+                                    <td>{{ consultation.medicine_name }}</td>
+                                    <td>{{ consultation.consumption_time }}</td>
+                                   
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">No consultation history available.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <p>No patient found with the specified ID.</p>
+    {% endif %}
+</div>
+
+
+
+{% endblock %}

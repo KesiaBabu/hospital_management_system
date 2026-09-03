@@ -1,0 +1,142 @@
+{% extends 'reception/recbase.html' %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <h2 class="text-center text-black mb-4">
+        <i class="fas fa-user"></i> Patient Details
+    </h2>
+
+    {% if patient %}
+       
+       <div class="card shadow mb-4" style="background: white; border-left: 6px solid #17a2b8; border-radius: 12px;">
+    <div class="card-body">
+        <h5 class="card-title text-info font-weight-bold">
+            <i class="fas fa-user-circle"></i> Basic Information
+        </h5>
+        <hr style="border-top: 1px solid #17a2b8;">
+        
+        <div class="row">
+            <div class="col-md-6 mb-2">
+                <strong>🆔 Patient ID:</strong> <span class="ml-2 text-dark">{{ patient.patient_id }}</span>
+            </div>
+            <div class="col-md-6 mb-2">
+                <strong>👤 Name:</strong> <span class="ml-2 text-dark">{{ patient.patient_name }}</span>
+            </div>
+            <div class="col-md-6 mb-2">
+                <strong>🏠 Address:</strong> <span class="ml-2 text-dark">{{ patient.patient_address }}</span>
+            </div>
+            <div class="col-md-6 mb-2">
+                <strong>📱 Mobile Number:</strong> <span class="ml-2 text-dark">{{ patient.mobile_number }}</span>
+            </div>
+            <div class="col-md-6 mb-2">
+                <strong>✉️ Email:</strong> <span class="ml-2 text-dark">{{ patient.email }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        
+        <h4 class="mb-3 text-success">📅 Upcoming Appointments</h4>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="table-responsive mb-5">
+            <table class="table table-hover table-bordered">
+                <thead style="background-color: #ffd966;">  
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Department</th>
+                        <th>Doctor Name</th>
+                        <th>Cancel</th>
+                    </tr>
+                </thead>
+                <tbody style="background-color: white;">
+                    {% if upcoming_appointments %}
+                        {% for appointment in upcoming_appointments %}
+                            <tr class="table-row-hover">
+                                <td>{{ appointment.appointment_date|date:"F d, Y H:i" }}</td>
+                                <td>{{ appointment.department.department_name }}</td>
+                                <td>{{ appointment.doctor.get_full_name }}</td>
+                                <td>
+                                    <form action="{% url 'cancel_appointment' appointment.id %}" method="POST" onsubmit="return confirmCancel();">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-danger">Cancel</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">No upcoming appointments.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+     
+        <div class="mt-4 pb-5">
+            <h4 class="mb-3 text-primary">📝 Consultation History</h4>
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                    <thead style="background-color: #c9daf8;">  
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Department</th>
+                            <th>Doctor Name</th>
+                            <th>Illness</th>
+                            <th>Medicine Name</th>
+                            <th>Consumption Time</th>
+                            <th>Download</th>
+                        </tr>
+                    </thead>
+                    <tbody style="background-color: white;">
+                        {% if consultations %}
+                            {% for consultation in consultations %}
+                                <tr class="table-row-hover">
+                                    <td>{{ consultation.timestamp|date:"F d, Y H:i" }}</td>
+                                    <td>{{ consultation.appointment.department.department_name }}</td>
+                                    <td>{{ consultation.appointment.doctor.get_full_name }}</td>
+                                    <td>{{ consultation.illness }}</td>
+                                    <td>{{ consultation.medicine_name }}</td>
+                                    <td>{{ consultation.consumption_time }}</td>
+                                    <td>
+                                        <a href="{% url 'download_consultation' consultation.id %}" class="btn btn-sm btn-primary">Download</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">No consultation history available.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-warning text-center">No patient found with the specified ID.</div>
+    {% endif %}
+</div>
+
+<style>
+.table-row-hover:hover {
+    background-color: #f2fdfd;
+}
+</style>
+
+<
+<script>
+function confirmCancel() {
+    return confirm('Are you sure you want to cancel this appointment?');
+}
+</script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
+{% endblock %}

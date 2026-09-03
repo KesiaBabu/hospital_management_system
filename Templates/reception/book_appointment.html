@@ -1,0 +1,68 @@
+{% extends 'reception/recbase.html' %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow p-4">
+                <h3 class="card-title text-center mb-4">📅 Book Appointment</h3>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} text-danger">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label for="department">Department</label>
+                        <select class="form-control" id="department" name="department" required>
+                            <option value="" disabled selected>Select Department</option>
+                            {% for department in departments %}
+                                <option value="{{ department.id }}" {% if department.id == selected_department %}selected{% endif %}>
+                                    {{ department.department_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="doctor">Doctor</label>
+                        <select class="form-control" id="doctor" name="doctor" required>
+                            <option value="" disabled selected>Select Doctor</option>
+                            {% for doctor in doctors %}
+                                <option value="{{ doctor.id }}">{{ doctor.get_full_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="patient_id">Patient ID</label>
+                        <input type="text" class="form-control" id="patient_id" name="patient_id" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="appointment_date">Appointment Date</label>
+                        <input type="datetime-local" class="form-control" id="appointment_date" name="appointment_date" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Book Appointment</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#department").change(function () {
+            var selectedDepartment = $(this).val();
+            window.location.href = "{% url 'book_appointment' %}?department=" + selectedDepartment;
+        });
+    });
+</script>
+{% endblock %}
